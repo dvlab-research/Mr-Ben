@@ -1,4 +1,9 @@
 # Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models
+
+<p align="center">
+📰 <a href="" target="_blank">Mr-Ben Official Website</a> • 🤗 <a href="https://huggingface.co/datasets/Randolphzeng/DiagGSM8K" target="_blank">HF Dataset</a> • 📝 <a href="https://arxiv.org/abs/2312.17080" target="_blank"> Arxiv Paper </a><br>
+</p>
+
 Welcome to the official repository for the Mr-Ben dataset and related research. This repository serves as a hub for resources associated with our recent publication "Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models". We have provided a demo evaluate script for you to try out benchmark in **mere two steps**. We encourage everyone to try out our benchmark in the SOTA models and return its results to us. We would be happy to include it in the `eval_results` and update the evaluation tables below for you.
 
 
@@ -48,6 +53,23 @@ Unless you start your vllm server with explicit api_key requirement, just leave 
 
 Note 1: If you are evaluating some closed source commercial models, and they have customized clients, you might need to change the `utils.request_by_client` function in the script. It should be fairly straightforward to customized as shown in the function.
 
+## How to Participate on Our LeaderBoard
+If you would like to join our leaderboard and make the evaluation results of your model publicly available, please use our provided evaluation script to conduct zero shot and one shot experiments, create a github issue and submit your evaluation results to us via github lfs. More details on this later.  
+
 ## Citation
 
 If you use the Mr-Ben dataset or find our research beneficial to your work, we encourage you to cite our paper. Here is the BibTeX entry for citation:
+```bibtex
+@article{DBLP:journals/corr/abs-2312-17080,
+  author       = {Zhongshen Zeng and Pengguang Chen and Shu Liu and Haiyun Jiang and Jiaya Jia},
+  title        = {MR-GSM8K: A Meta-Reasoning Benchmark for Large Language Model Evaluation},
+  journal      = {CoRR},
+  volume       = {abs/2312.17080},
+  year         = {2023},
+  url          = {https://doi.org/10.48550/arXiv.2312.17080},
+  doi          = {10.48550/ARXIV.2312.17080},
+  eprinttype    = {arXiv},
+  eprint       = {2312.17080},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2312-17080.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
