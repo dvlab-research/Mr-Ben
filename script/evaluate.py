@@ -1,6 +1,6 @@
 import argparse, os, json
 from openai import OpenAI
-from evaluation.utils import (multi_thread_scoring, 
+from script.utils import (multi_thread_scoring, 
                             multi_thread_response_generation,
                             process_subject_data,
                             get_mr_score)

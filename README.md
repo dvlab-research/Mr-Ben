@@ -36,7 +36,7 @@ python -u -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 10245 --mo
 
 2. Now that you have your local model served in an OpenAI API compatible way or a remote API server, we can asynchrounously request your model in a multi-thread way. Use the following command to invoke our eval_mr_gsm8k.py. We are currently supporting OpenAI style client, MistralAI client and Claude client:
 ```
-python -m script.evaluate_open_source_models
+python -m script.evaluate
   --dataset_path './data'
   --output_dir './eval_results' 
   --eval_base_url 'http://0.0.0.0:10245/v1'  
@@ -61,7 +61,7 @@ If you would like to join our leaderboard and make the evaluation results of you
 
 ## Data Format
 For each question we collected, we sampled three solutions from Mistral, Claude and GPT3.5. Following is the explanation of each field in the json. 
-```json
+```
 {
   'Question_UUID': 'the unique identifier of the question, each question has three candidate solutions sampled from different models',
   'Subject': 'the subject that this question belongs to',
