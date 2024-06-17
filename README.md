@@ -1,7 +1,7 @@
 # Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models
 
 <p align="center">
-📰 <a href="" target="_blank">Mr-Ben Official Website</a> • 🤗 <a href="https://huggingface.co/datasets/Randolphzeng/DiagGSM8K" target="_blank">HF Dataset</a> • 📝 <a href="https://arxiv.org/abs/2312.17080" target="_blank"> Arxiv Paper </a><br>
+📰 <a href="https://randolph-zeng.github.io/Mr-Ben.github.io/" target="_blank">Mr-Ben Official Website</a> • 🤗 <a href="https://huggingface.co/datasets/Randolphzeng/Mr-Ben" target="_blank">HF Dataset</a> • 📝 <a href="https://arxiv.org/abs/2312.17080" target="_blank"> Arxiv Paper </a><br>
 </p>
 
 Welcome to the official repository for the Mr-Ben dataset and related research. This repository serves as a hub for resources associated with our recent publication "Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models". We have provided a demo evaluate script for you to try out benchmark in **mere two steps**. We encourage everyone to try out our benchmark in the SOTA models and return its results to us. We would be happy to include it in the `eval_results` and update the evaluation tables below for you.
@@ -44,17 +44,40 @@ python -m script.evaluate_open_source_models
   --eval_model_name '/absolute/path/to/your/local/model' 
   --score_base_url '' 
   --score_api_key 'sk-xxxx' 
-  --score_model_name 'gpt-4-turbo'  
+  --score_model_name 'gpt-4-turbo-2024-04-09'  
   --shot_num 0  
   --max_workers 5   
   --demo_path './data/k-shot-demo.json'
 ```
-Unless you start your vllm server with explicit api_key requirement, just leave the eval_api_key with any non-empty string. The eval-base-url/api-key/model-name and score-base-url/api-key/model-name are used to create your client for evaluation and scoring purpose. We recommend using GPT-4-Turbo for the scoring as it is consistent with our paper. Shot number controls the number of demonstration for in context learning. The max-workers controls the thread numbers to request your server. 
+Unless you start your vllm server with explicit api_key requirement, just leave the eval_api_key with any non-empty string. The eval-base-url/api-key/model-name and score-base-url/api-key/model-name are used to create your client for evaluation and scoring purpose. We recommend using gpt-4-turbo-2024-04-09 for the scoring as it is consistent with our paper. Shot number controls the number of demonstration for in context learning. The max-workers controls the thread numbers to request your server. 
 
 Note 1: If you are evaluating some closed source commercial models, and they have customized clients, you might need to change the `utils.request_by_client` function in the script. It should be fairly straightforward to customized as shown in the function.
 
+## Evaluation Results
+We have provided a comprehensive list of evaluation results both [in our paper](https://arxiv.org/abs/2312.17080) and [in our official website](https://randolph-zeng.github.io/Mr-Ben.github.io/). Feel free to check them out! 
+
 ## How to Participate on Our LeaderBoard
-If you would like to join our leaderboard and make the evaluation results of your model publicly available, please use our provided evaluation script to conduct zero shot and one shot experiments, create a github issue and submit your evaluation results to us via github lfs. More details on this later.  
+If you would like to join our leaderboard and make the evaluation results of your model publicly available, pleas kindly use our provided evaluation script to conduct zero shot and one shot experiments, and then create a github issue with our provided template and submit your evaluation results to us.  
+
+## Data Format
+For each question we collected, we sampled three solutions from Mistral, Claude and GPT3.5. Following is the explanation of each field in the json. 
+```json
+{
+  'Question_UUID': 'the unique identifier of the question, each question has three candidate solutions sampled from different models',
+  'Subject': 'the subject that this question belongs to',
+  'Question': 'the subject question or coding question',
+  'Options': 'the options of the multiple choice questions (this field is not present in coding question)'
+  'Ground_Truth_Analysis': 'the ground truth analysis for the question',
+  'Ground_Truth_Answer': 'the ground truth answer of the problem from the original datasets we sampled the question from',
+  'Ground_Truth_Answer_Modified': 'the actual answer the annotators of our project believe should be. The annotation is based on this field. (this field is not present in coding question)',
+  'Sampled_Model': 'the model that the following COT solution was sampled from'
+  'Model_Solution_Steps': 'the candidate COT solution to be graded',
+  'Model_Solution_Correctness': 'the correctness of the solution determined by our annotators, can only be correct or incorrect',
+  'Model_Solution_First_Error_Step': 'the first error step of solution. N/A if not applicable',
+  'Model_Solution_Error_Reason': 'the error reasons of the solution provided by our annotators independently, N/A if not applicable',
+  'Model_Solution_Rectified_First_Error_Step': 'the rectified first error step of the solution, N/A if not applicable',
+}
+```
 
 ## Citation
 
