@@ -34,7 +34,7 @@ Here is a high level description of how you can evaluate your models (either ope
 python -u -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 10245 --model /absolute/path/to/your/local/model --dtype half --gpu-memory-utilization 0.9  --max-model-len 8192 --tensor-parallel-size 4 --disable-log-requests
 ```   
 
-2. Now that you have your local model served in an OpenAI API compatible way or a remote API server, we can asynchrounously request your model in a multi-thread way. Use the following command to invoke our eval_mr_gsm8k.py. We are currently supporting OpenAI style client, MistralAI client and Claude client:
+2. Now that you have your local model served in an OpenAI API compatible way or a remote API server, we can asynchrounously request your model in a multi-thread way. Use the following command to invoke our evaluate script. We are currently supporting OpenAI style client, MistralAI client and Claude client:
 ```
 python -m script.evaluate
   --dataset_path './data'
