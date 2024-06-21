@@ -83,16 +83,13 @@ For each question we collected, we sampled three solutions from Mistral, Claude 
 
 If you use the Mr-Ben dataset or find our research beneficial to your work, we encourage you to cite our paper. Here is the BibTeX entry for citation:
 ```bibtex
-@article{DBLP:journals/corr/abs-2312-17080,
-  author       = {Zhongshen Zeng and Pengguang Chen and Shu Liu and Haiyun Jiang and Jiaya Jia},
-  title        = {MR-GSM8K: A Meta-Reasoning Benchmark for Large Language Model Evaluation},
+@article{zeng2024mrben,
+  author       = {Zhongshen Zeng and Yinhong Liu and Yingjia Wan and Jingyao Li and Pengguang Chen and Jianbo Dai and Yuxuan Yao and Rongwu Xu and Zehan Qi and Wanru Zhao and Linling Shen and Jianqiao Lu and Haochen Tan and Yukang Chen and Hao Zhang and Zhan Shi and Bailin Wang and Zhijiang Guo and Jiaya Jia},
+  title        = {MR-BEN: A Comprehensive Meta-Reasoning Benchmark for Large Language Models},
   journal      = {CoRR},
-  volume       = {abs/2312.17080},
-  year         = {2023},
-  url          = {https://doi.org/10.48550/arXiv.2312.17080},
-  doi          = {10.48550/ARXIV.2312.17080},
+  volume       = {abs/2406.13975},
+  year         = {2024},
+  url          = {https://arxiv.org/abs/2406.13975},
   eprinttype    = {arXiv},
-  eprint       = {2312.17080},
-  biburl       = {https://dblp.org/rec/journals/corr/abs-2312-17080.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
+  eprint       = {2406.13975}
 }
