@@ -1,7 +1,7 @@
 # Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models
 
 <p align="center">
-📰 <a href="https://randolph-zeng.github.io/Mr-Ben.github.io/" target="_blank">Mr-Ben Official Website</a> • 🤗 <a href="https://huggingface.co/datasets/Randolphzeng/Mr-Ben" target="_blank">HF Dataset</a> • 📝 <a href="https://arxiv.org/abs/2312.17080" target="_blank"> Arxiv Paper </a><br>
+📰 <a href="https://randolph-zeng.github.io/Mr-Ben.github.io/" target="_blank">Mr-Ben Official Website</a> • 🤗 <a href="https://huggingface.co/datasets/Randolphzeng/Mr-Ben" target="_blank">HF Dataset</a> • 📝 <a href="https://arxiv.org/abs/2406.13975" target="_blank"> Arxiv Paper </a><br>
 </p>
 
 Welcome to the official repository for the Mr-Ben dataset and related research. This repository serves as a hub for resources associated with our recent publication "Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models". We have provided a demo evaluate script for you to try out benchmark in **mere two steps**. We encourage everyone to try out our benchmark in the SOTA models and return its results to us. We would be happy to include it in the `eval_results` and update the evaluation tables below for you.
