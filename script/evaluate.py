@@ -215,7 +215,7 @@ if __name__ == "__main__":
     parser.add_argument('--top_p', '-p', type=float, required=False, default=0.9, help='Top-p threshold for sampling')
     parser.add_argument('--max_tokens', '-m', type=int, required=False, default=None, help='Max token numbers to generate during sampling')
     parser.add_argument('--stop_token_ids', type=int, required=False,  nargs="+", help='List of stop token ids because default tokenizer used by vllm might not be using correct stop tokens in chat models.')
-    parser.add_argument('--max_completion_tokens', type=int, required=False, default=4096, help='An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and reasoning tokens. You might need this for o1 series of models.')
+    parser.add_argument('--max_completion_tokens', type=int, required=False, default=8192, help='An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and reasoning tokens. You might need this for o1 series of models.')
     parser.add_argument('--shot_num', '-k', type=int, required=False, default=0, help='The number of demonstrations for evaluated model')
     parser.add_argument('--demo_path', type=str, required=False, default='', help='The path to the few shot demo file for evaluation')
     parser.add_argument('--max_workers', type=int, required=False, default=5, help='The number of multi-thread workers for api requests')

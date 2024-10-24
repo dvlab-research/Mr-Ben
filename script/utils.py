@@ -4,7 +4,7 @@ import openai, anthropic
 from mistralai.client import MistralClient
 from concurrent.futures import ThreadPoolExecutor
 
-def request_by_client(client, prompt, model, max_retry=5, temperature=0., top_p=0.9, max_token=None, stop_token_ids=None, max_completion_tokens=8192):
+def request_by_client(client, prompt, model, max_retry=5, temperature=0., top_p=0.9, max_tokens=None, stop_token_ids=None, max_completion_tokens=8192):
     messages = [{"role": "user", "content": prompt}]
     retry = 0
     # only used in openai style api for local open source model inference served by vllm library
@@ -13,24 +13,32 @@ def request_by_client(client, prompt, model, max_retry=5, temperature=0., top_p=
         try:
             if isinstance(client, openai.OpenAI):
                 if model == 'o1-mini' or model == 'o1-preview':
-                    max_tokens, temperature, top_p = None, 1., 1. # o1 model does not support temperature and top_p not equal to 1 
-                else:
-                    max_completion_tokens=None
-                completion = client.chat.completions.create(
+                    temperature, top_p = 1., 1. # o1 model does not support temperature and top_p not equal to 1 
+                    completion = client.chat.completions.create(
                                 model=model,
                                 messages=messages,
-                                max_tokens=max_token,
                                 max_completion_tokens=max_completion_tokens,
                                 temperature=temperature,
                                 top_p=top_p,
                                 extra_body=extra_body
-                )
+                    )   
+                else:
+                    # max_tokens is deprecated and is not compatible with o1 series 
+                    completion = client.chat.completions.create(
+                                model=model,
+                                messages=messages,
+                                max_tokens=max_tokens,
+                                temperature=temperature,
+                                top_p=top_p,
+                                extra_body=extra_body
+                    )
+                
                 output = completion.choices[0].message.content
                 break
             elif isinstance(client, anthropic.Anthropic):
                 response = client.messages.create(
                     model=model,
-                    max_tokens=max_token,
+                    max_tokens=max_tokens,
                     temperature=temperature,
                     messages=messages,
                     top_p=top_p
@@ -41,7 +49,7 @@ def request_by_client(client, prompt, model, max_retry=5, temperature=0., top_p=
                 response = client.chat(
                     model=model,
                     messages=messages,
-                    max_tokens=max_token,
+                    max_tokens=max_tokens,
                     temperature=temperature,
                     top_p=top_p
                 )
@@ -65,9 +73,13 @@ def parse_model_response(model_response):
     # use the format specified in the prompt to parse response
     try:
         # incase the model generate more than one response, we select the first one
-        sol_analysis, rest_part = model_response.split('Solution Correctness:')[:2]
-        sol_corr, rest_part = rest_part.split('First Error Step:')[:2]
-        fst_err_step, err_reason = rest_part.split('Error Reason:')[:2]
+        # o1 are really bad at following format requirement, small patch here to fix the issue
+        pattern = r'\*?\*?Solution Correctness:?\*?\*?:?'
+        sol_analysis, rest_part = re.split(pattern, model_response)[:2]
+        pattern = r'\*?\*?First Error Step:?\*?\*?:?'
+        sol_corr, rest_part = re.split(pattern, rest_part)[:2]
+        pattern = r'\*?\*?Error Reason:?\*?\*?:?'
+        fst_err_step, err_reason = re.split(pattern, rest_part)[:2]
     except Exception as e:
         print(f'Fail to parse model response: {e}')
 
@@ -81,7 +93,7 @@ def single_thread_response_generation(data, client, model_name, temperature, top
                                     model=model_name,
                                     temperature=temperature,
                                     top_p=top_p, 
-                                    max_token=max_tokens,
+                                    max_tokens=max_tokens,
                                     stop_token_ids=stop_token_ids,
                                     max_completion_tokens=max_completion_tokens)
     sol_corr, fst_err_step, err_reason = parse_model_response(model_response)
