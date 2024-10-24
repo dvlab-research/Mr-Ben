@@ -4,8 +4,12 @@
 📰 <a href="https://randolph-zeng.github.io/Mr-Ben.github.io/" target="_blank">Mr-Ben Official Website</a> • 🤗 <a href="https://huggingface.co/datasets/Randolphzeng/Mr-Ben" target="_blank">HF Dataset</a> • 📝 <a href="https://arxiv.org/abs/2406.13975" target="_blank"> Arxiv Paper </a><br>
 </p>
 
+## 🚀🚀[News] MR-Ben is accepted by NeurIPS 2024 ! 🚀🚀
+
 Welcome to the official repository for the Mr-Ben dataset and related research. This repository serves as a hub for resources associated with our recent publication "Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models". We have provided a demo evaluate script for you to try out benchmark in **mere two steps**. We encourage everyone to try out our benchmark in the SOTA models and return its results to us. We would be happy to include it in the `eval_results` and update the evaluation tables below for you.
 
+## Relationship with Mr-GSM8K
+Mr-Ben is the extention and continuation of [Mr-GSM8K](https://github.com/dvlab-research/MR-GSM8K), where we first brought up the concept of meta-reasoning and applied it to transform the original GSM8K dataset to a more challenging and comprehensive evaluation benchmark. If you are interested in thoroughly evaluate the reasoning abilities of your model, please do not forget to also check out Mr-GSM8k! We have provided a similar one-command evaluation script for your usage.
 
 ## About the Evaluation Benchmark
 
