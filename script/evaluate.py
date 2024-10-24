@@ -33,7 +33,7 @@ def load_dataset(dataset_path, k_shot, demo_path):
                 loaded_dataset[subject] = subject_data
     return loaded_dataset
 
-def generate_response(client, benchmark, model_name, temperature, top_p, max_tokens, stop_token_ids, unscored_save_path, max_workers):
+def generate_response(client, benchmark, model_name, temperature, top_p, max_tokens, stop_token_ids, max_completion_tokens, unscored_save_path, max_workers):
     results = {}
     for subject in benchmark:
         results[subject] = []
@@ -54,7 +54,8 @@ def generate_response(client, benchmark, model_name, temperature, top_p, max_tok
                                          temperature, 
                                          top_p, 
                                          max_tokens, 
-                                         stop_token_ids, 
+                                         stop_token_ids,
+                                         max_completion_tokens, 
                                          EVAL_KEY,
                                          max_workers)
         if type(benchmark[subject]) == list:
@@ -72,17 +73,21 @@ def score_error_reason(score_client, score_model, eval_results, scored_save_path
             # We only need to score incorrect solutions with correctly predicted first error step
             data['Need_Error_Reason_Review'] = False
             if data['Model_Solution_Correctness'] == 'incorrect':
-                if data[EVAL_KEY]['solution_correctness'].strip().lower() == 'incorrect':
+                if 'incorrect' in data[EVAL_KEY]['solution_correctness'].strip().lower():
                     if subject == 'coding':
                         # for coding task, the first error step is only a rough indicator and should be scored by scoring model or annotator
                         data['Need_Error_Reason_Review'] = True
                         continue
                     if data[EVAL_KEY]['first_error_step'].strip().isdigit():
                         error_step_pred = data[EVAL_KEY]['first_error_step'].strip()
-                    elif data[EVAL_KEY]['first_error_step'].strip().lower() in step_mapper:
-                        error_step_pred = step_mapper[data[EVAL_KEY]['first_error_step'].strip().lower()]
+                    # update the detection heuristics
                     else:
-                        error_step_pred = ''
+                        step_key = data[EVAL_KEY]['first_error_step'].strip().lower()
+                        step_key = ''.join([char for char in step_key if char.isalnum() or char == ' '])
+                        if step_key in step_mapper:
+                            error_step_pred = step_mapper[step_key]
+                        else:
+                            error_step_pred = ''
                     if error_step_pred == data['Model_Solution_First_Error_Step']:
                         data['Need_Error_Reason_Review'] = True
     # score with gpt4 
@@ -113,6 +118,7 @@ def calculate_mr_score(scored_eval_results):
             else:
                 incorrect_sol_num +=1 
             correctness_pred = data[EVAL_KEY]['solution_correctness'].strip().lower()
+            correctness_pred = ''.join([char for char in correctness_pred if char.isalpha()])
             if data['Model_Solution_Correctness'] == correctness_pred:
                 if data['Model_Solution_Correctness'] == 'correct':
                     task1_true_positive +=1
@@ -129,10 +135,13 @@ def calculate_mr_score(scored_eval_results):
                             continue
                     if data[EVAL_KEY]['first_error_step'].strip().isdigit():
                         error_step_pred = data[EVAL_KEY]['first_error_step']
-                    elif data[EVAL_KEY]['first_error_step'].strip().lower() in step_mapper:
-                        error_step_pred = step_mapper[data[EVAL_KEY]['first_error_step'].strip().lower()]
                     else:
-                        error_step_pred = ''
+                        step_key = data[EVAL_KEY]['first_error_step'].strip().lower()
+                        step_key = ''.join([char for char in step_key if char.isalnum() or char == ' '])
+                        if step_key in step_mapper:
+                            error_step_pred = step_mapper[step_key]
+                        else:
+                            error_step_pred = ''
                     if error_step_pred == data['Model_Solution_First_Error_Step']:
                         task2_accy += 1
                         if 'correct' in data['Error_Reason_Correctness_Analysis']['error_reason_correctness'].lower():
@@ -163,7 +172,7 @@ def main(args):
     # load the MR-BEAN dataset and construct the corresponding evaluation prompts
     mr_bean_dataset = load_dataset(args.dataset_path, args.shot_num, args.demo_path)
     try:
-        with open(unscored_save_path) as file:
+        with open(scored_save_path) as file:
             generated_res = json.load(file)
         for subject in generated_res:
             mr_bean_dataset[subject] = generated_res[subject]
@@ -177,6 +186,7 @@ def main(args):
                                              args.top_p,
                                              args.max_tokens,
                                              args.stop_token_ids,
+                                             args.max_completion_tokens,
                                              unscored_save_path,
                                              args.max_workers)
     score_client = OpenAI(base_url=args.score_base_url, api_key=args.score_api_key)
@@ -204,7 +214,8 @@ if __name__ == "__main__":
     parser.add_argument('--temperature', '-t', type=float, required=False, default=0.0,  help='Temperature for sampling')
     parser.add_argument('--top_p', '-p', type=float, required=False, default=0.9, help='Top-p threshold for sampling')
     parser.add_argument('--max_tokens', '-m', type=int, required=False, default=None, help='Max token numbers to generate during sampling')
-    parser.add_argument('--stop_token_ids', type=int, required=False,  nargs="+", help='List of stop token ids because default tokenizer used by vllm might not using correct stop tokens in chat models.')
+    parser.add_argument('--stop_token_ids', type=int, required=False,  nargs="+", help='List of stop token ids because default tokenizer used by vllm might not be using correct stop tokens in chat models.')
+    parser.add_argument('--max_completion_tokens', type=int, required=False, default=4096, help='An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and reasoning tokens. You might need this for o1 series of models.')
     parser.add_argument('--shot_num', '-k', type=int, required=False, default=0, help='The number of demonstrations for evaluated model')
     parser.add_argument('--demo_path', type=str, required=False, default='', help='The path to the few shot demo file for evaluation')
     parser.add_argument('--max_workers', type=int, required=False, default=5, help='The number of multi-thread workers for api requests')

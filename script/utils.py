@@ -4,7 +4,7 @@ import openai, anthropic
 from mistralai.client import MistralClient
 from concurrent.futures import ThreadPoolExecutor
 
-def request_by_client(client, prompt, model, max_retry=5, temperature=0., top_p=0.9, max_token=None, stop_token_ids=None):
+def request_by_client(client, prompt, model, max_retry=5, temperature=0., top_p=0.9, max_token=None, stop_token_ids=None, max_completion_tokens=8192):
     messages = [{"role": "user", "content": prompt}]
     retry = 0
     # only used in openai style api for local open source model inference served by vllm library
@@ -12,10 +12,15 @@ def request_by_client(client, prompt, model, max_retry=5, temperature=0., top_p=
     while True:
         try:
             if isinstance(client, openai.OpenAI):
+                if model == 'o1-mini' or model == 'o1-preview':
+                    max_tokens, temperature, top_p = None, 1., 1. # o1 model does not support temperature and top_p not equal to 1 
+                else:
+                    max_completion_tokens=None
                 completion = client.chat.completions.create(
                                 model=model,
                                 messages=messages,
                                 max_tokens=max_token,
+                                max_completion_tokens=max_completion_tokens,
                                 temperature=temperature,
                                 top_p=top_p,
                                 extra_body=extra_body
@@ -69,7 +74,7 @@ def parse_model_response(model_response):
     return sol_corr, fst_err_step, err_reason
 
 
-def single_thread_response_generation(data, client, model_name, temperature, top_p, max_tokens, stop_token_ids, EVAL_KEY):
+def single_thread_response_generation(data, client, model_name, temperature, top_p, max_tokens, stop_token_ids, max_completion_tokens, EVAL_KEY):
     prompt = data['Query_Prompt']
     model_response = request_by_client(client=client, 
                                     prompt=prompt, 
@@ -77,7 +82,8 @@ def single_thread_response_generation(data, client, model_name, temperature, top
                                     temperature=temperature,
                                     top_p=top_p, 
                                     max_token=max_tokens,
-                                    stop_token_ids=stop_token_ids)
+                                    stop_token_ids=stop_token_ids,
+                                    max_completion_tokens=max_completion_tokens)
     sol_corr, fst_err_step, err_reason = parse_model_response(model_response)
     data[EVAL_KEY] = {
         'evaluated_model': model_name,
@@ -88,11 +94,11 @@ def single_thread_response_generation(data, client, model_name, temperature, top
     }
 
 
-def multi_thread_response_generation(data_list, client, model_name, temperature, top_p, max_tokens, stop_token_ids, EVAL_KEY, max_workers=5):
+def multi_thread_response_generation(data_list, client, model_name, temperature, top_p, max_tokens, stop_token_ids, max_completion_tokens, EVAL_KEY, max_workers=5):
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = list(
             tqdm(
-                executor.map(lambda x: single_thread_response_generation(x, client, model_name, temperature, top_p, max_tokens, stop_token_ids, EVAL_KEY), data_list),
+                executor.map(lambda x: single_thread_response_generation(x, client, model_name, temperature, top_p, max_tokens, stop_token_ids, max_completion_tokens, EVAL_KEY), data_list),
                 total=len(data_list)
             )
         )
