@@ -1,22 +1,24 @@
-# Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models
+# MR-Ben: A Meta-Reasoning Benchmark for Evaluating System-2 Thinking in LLMs
 
 <p align="center">
-📰 <a href="https://randolph-zeng.github.io/Mr-Ben.github.io/" target="_blank">Mr-Ben Official Website</a> • 🤗 <a href="https://huggingface.co/datasets/Randolphzeng/Mr-Ben" target="_blank">HF Dataset</a> • 📝 <a href="https://arxiv.org/abs/2406.13975" target="_blank"> Arxiv Paper </a><br>
+📰 <a href="https://randolph-zeng.github.io/Mr-Ben.github.io/" target="_blank">MR-Ben Official Website</a> • 🤗 <a href="https://huggingface.co/datasets/Randolphzeng/Mr-Ben" target="_blank">HF Dataset</a> • 📝 <a href="https://arxiv.org/abs/2406.13975" target="_blank"> Arxiv Paper </a><br>
 </p>
 
 ## 🚀🚀[News] MR-Ben is accepted by NeurIPS 2024 ! 🚀🚀
 
-Welcome to the official repository for the Mr-Ben dataset and related research. This repository serves as a hub for resources associated with our recent publication "Mr-Ben: A Comprehensive Meta-Reasoning Benchmark for Large Language Models". We have provided a demo evaluate script for you to try out benchmark in **mere two steps**. We encourage everyone to try out our benchmark in the SOTA models and return its results to us. We would be happy to include it in the `eval_results` and update the evaluation tables below for you.
+Welcome to the official repository for the MR-Ben dataset and related research. This repository serves as a hub for resources associated with our recent publication "MR-Ben: A Meta-Reasoning Benchmark for Evaluating System-2 Thinking in LLMs". We have provided a demo evaluate script for you to try out benchmark in **mere two steps**. We encourage everyone to try out our benchmark in the SOTA models and return its results to us. We would be happy to include it in the `eval_results` and update the evaluation tables below for you.
 
 ## Relationship with Mr-GSM8K
 Mr-Ben is the extention and continuation of [Mr-GSM8K](https://github.com/dvlab-research/MR-GSM8K), where we first brought up the concept of meta-reasoning and applied it to transform the original GSM8K dataset to a more challenging and comprehensive evaluation benchmark. If you are interested in thoroughly evaluate the reasoning abilities of your model, please do not forget to also check out Mr-GSM8k! We have provided a similar one-command evaluation script for your usage.
 
-## About the Evaluation Benchmark
+## About the Evaluation Benchmark and System-2 Thinking
 
-To comprehensively evaluate the reasoning capabilities of LLMs, Mr-Ben employs a meta-reasoning paradigm. This paradigm casts LLMs in the role of a teacher, where they assess the reasoning process by evaluating its correctness, analyzing errors, and providing corrections. As shown in the figure below, each data point within Mr-Ben consists of three key elements: a question, a CoT answer, and an error analysis.
+To comprehensively evaluate the reasoning capabilities of LLMs, Mr-Ben employs a meta-reasoning paradigm. This paradigm casts LLMs in the role of a teacher, where they assess the reasoning process by evaluating its correctness, analyzing errors, and providing corrections. To excel under our meta-reasoning paradigm, models must meticulously scrutinize assumptions, conditions, calculations, and logical steps, even inferring step outcomes counterfactually. These requirements align with the characteristics of "System-2" slow thinking, which we believe remains underdeveloped in most of the state-of-the-art models we evaluated.
+
+ As shown in the figure below, each data point within Mr-Ben consists of three key elements: a question, a CoT answer, and an error analysis.
 
 For each question-solution pair annotated, the evaluated model are supposed to decide the correctness of the solution and report the first-error-step and error-reason if any. 
-The solution-correctness and first-error-step is scored automatically based on the manual annotation result. Only when the evaluated model correctly identified the incorrect solution and first-error-step will its error-reason be further examined automatically by models (or manually if you want. For more discussion on the metrics please refer to section-4 of the paper.). Therefore in order to provide a unified and normalized score to reflect the overall competence of the evaluated model, we [follows our previous work MR-GSM8K](https://github.com/dvlab-research/MR-GSM8K) and applies metric named MR-Score, which consists of three sub-metrics. 
+The solution-correctness and first-error-step is scored automatically based on the manual annotation result. Only when the evaluated model correctly identified the incorrect solution and first-error-step will its error-reason be further examined automatically by models (or manually if you want. For more discussion on the metrics design and robustness please refer to Section-4/Appendix-B of the paper.). Therefore in order to provide a unified and normalized score to reflect the overall competence of the evaluated model, we [follows our previous work MR-GSM8K](https://github.com/dvlab-research/MR-GSM8K) and applies metric named MR-Score, which consists of three sub-metrics. 
 
 ![Mr-Ben Illustration](images/Mr-Ben.jpg)
 
@@ -58,7 +60,9 @@ Unless you start your vllm server with explicit api_key requirement, just leave 
 Note 1: If you are evaluating some closed source commercial models, and they have customized clients, you might need to change the `utils.request_by_client` function in the script. It should be fairly straightforward to customized as shown in the function.
 
 ## Evaluation Results
-We have provided a comprehensive list of evaluation results both [in our paper](https://arxiv.org/abs/2312.17080) and [in our official website](https://randolph-zeng.github.io/Mr-Ben.github.io/). Feel free to check them out! 
+We have provided a comprehensive list of evaluation results both [in our paper](https://arxiv.org/abs/2312.17080) and [in our official website](https://randolph-zeng.github.io/Mr-Ben.github.io/). As mentioned above that we believe to excel in our benchmark, it is necessary to possess some characteristics of "system-2" thinking paradigms. Echoing this hypothesis, we
+observed that models like o1-preview, which reportedly incorporate effective search and disambiguation techniques across trajectories in the solution space, outperform other models by a large
+margin. Moreover, we found that leveraging high-quality and diverse synthetic data (e.g. Phi-series) significantly mitigates this issue, offering a promising path to enhance performance regardless of model size. Feel free to check the eval results out! 
 
 ## How to Participate on Our LeaderBoard
 If you would like to join our leaderboard and make the evaluation results of your model publicly available, pleas kindly use our provided evaluation script to conduct zero shot and one shot experiments, and then create a github issue with our provided template and submit your evaluation results to us.  
@@ -85,11 +89,11 @@ For each question we collected, we sampled three solutions from Mistral, Claude 
 
 ## Citation
 
-If you use the Mr-Ben dataset or find our research beneficial to your work, we encourage you to cite our paper. Here is the BibTeX entry for citation:
+If you use the MR-Ben dataset or find our research beneficial to your work, we encourage you to cite our paper. Here is the BibTeX entry for citation:
 ```bibtex
 @article{zeng2024mrben,
   author       = {Zhongshen Zeng and Yinhong Liu and Yingjia Wan and Jingyao Li and Pengguang Chen and Jianbo Dai and Yuxuan Yao and Rongwu Xu and Zehan Qi and Wanru Zhao and Linling Shen and Jianqiao Lu and Haochen Tan and Yukang Chen and Hao Zhang and Zhan Shi and Bailin Wang and Zhijiang Guo and Jiaya Jia},
-  title        = {MR-BEN: A Comprehensive Meta-Reasoning Benchmark for Large Language Models},
+  title        = {MR-Ben: A Meta-Reasoning Benchmark for Evaluating System-2 Thinking in LLMs},
   journal      = {CoRR},
   volume       = {abs/2406.13975},
   year         = {2024},
